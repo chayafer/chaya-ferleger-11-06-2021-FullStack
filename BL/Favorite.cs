@@ -3,70 +3,68 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Weather.Contract;
+using Weather.Dal;
 using Weather.Models;
 
 namespace Weather.BL
 {
     public class Favorite : IFavorite
     {
+        private AccWeatherContext _accWeatherContext;
+
+        public Favorite(AccWeatherContext accWeatherContext)
+        {
+            _accWeatherContext = accWeatherContext;
+        }
         public async Task AddToFavorite(Models.City city)
         {
             try
             {
-                using (var context = new AccWeatherContext())
+                if (_accWeatherContext.FavoritesCities.FirstOrDefault(w => w.CityKey == city.CityKey) == null)
                 {
-                    if (context.FavoritesCities.FirstOrDefault(w => w.CityKey == city.CityKey) == null)
-                    {
-                        context.FavoritesCities.Add(new FavoritesCity { CityKey = city.CityKey, LocalizedName = city.CityName });
-                        await context.SaveChangesAsync();
-                    }
+                    _accWeatherContext.FavoritesCities.Add(new FavoritesCity { CityKey = city.CityKey, LocalizedName = city.CityName });
+                    await _accWeatherContext.SaveChangesAsync();
                 }
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
 
                 throw ex;
             }
-           
-           
+
+
         }
 
         public async Task DeleteFavorite(string cityKey)
         {
             try
             {
-                using (var context = new AccWeatherContext())
-                {
-                    var city = context.FavoritesCities.FirstOrDefault(w => w.CityKey == cityKey);
-                    if (city == null)
-                        throw new ArgumentNullException("city is not existing in db");
-                    context.FavoritesCities.Remove(city);
-                    await context.SaveChangesAsync();
-                }
+                var city = _accWeatherContext.FavoritesCities.FirstOrDefault(w => w.CityKey == cityKey);
+                if (city == null)
+                    throw new ArgumentNullException("city is not existing in db");
+                _accWeatherContext.FavoritesCities.Remove(city);
+                await _accWeatherContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
-            
+
         }
 
         public FavoritesCity[] GetFavorites()
         {
             try
             {
-                using (var context = new AccWeatherContext())
-                {
-                    return context.FavoritesCities.ToArray();
-                }
+                return _accWeatherContext.FavoritesCities.ToArray();
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
-            
+
         }
     }
 }

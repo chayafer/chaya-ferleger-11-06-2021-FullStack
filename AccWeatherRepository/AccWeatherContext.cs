@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Weather.Models;
 
 #nullable disable
 
-namespace Weather.Models
+namespace Weather.Dal
 {
     public partial class AccWeatherContext : DbContext
     {

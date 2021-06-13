@@ -45,7 +45,7 @@ namespace Weather.Controllers
 
         [Route("/[controller]/v1/currentweather")]
         [HttpGet]
-        public async Task<ActionResult<LocationWeather>> GetCurrentWeather([FromQuery][Required] string cityKey, [FromQuery][Required] string cityName)
+        public async Task<ActionResult<LocationWeather>> GetCurrentWeather([FromQuery][Required] string cityKey, [FromQuery] string cityName= default)
         {
             var weatherResult = await _weather.GetCurrentWeather(cityKey, cityName);
             
@@ -77,6 +77,22 @@ namespace Weather.Controllers
         {
             var favoritesCities = _favorite.GetFavorites();
             return new OkObjectResult(favoritesCities);
+
+        }
+
+        [Route("/[controller]/getApiUrlExamples")]
+        [HttpGet]
+        public ActionResult<string[]> GetApiUrlList()
+        {
+            var list = new string[]
+            {  "http://localhost:23519/weather/v1/search?key=aa",
+                "http://localhost:23519/weather/v1/currentweather?cityKey=215854&cityName=Tel Aviv",
+                "http://localhost:23519/weather/v1/addfavorite",
+                "http://localhost:23519/weather/v1/getfavorites",
+                "http://localhost:23519/weather/v1/deletefavorite/213225"
+
+            };
+            return new OkObjectResult(list);
 
         }
     }
